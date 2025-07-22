@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  mcp-server:
+    build: .
+    container_name: mcp-server
+    ports:
+      - "8000:8000"          # call from localhost:8000
+    volumes:
+      - .:/app               # hot‑reload when you edit code
+    environment:
+      PYTHONUNBUFFERED: "1"
