@@ -1,0 +1,57 @@
+name: deploy-dev
+on:
+  push:
+    branches: [dev]
+
+env:
+  ACR: myacr.azurecr.io
+  RG:  aca-dev-rg
+  WORKSPACE: dev 
+  LABEL: dev              
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions: { id-token: write }     # OIDC → Azure
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/login@v1
+        with:
+          creds-file: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure using Federated Credentials
+        uses: azure/login@v1
+        with:
+          client-id: ${{ vars.UAMI_ID }}
+          tenant-id: ${{ vars.TENANT_ID }}
+          subscription-id: ${{ vars.SUB_ID }}
+          allow-no-subscriptions: true 
+
+      # # ---------- build & push the image ----------
+      # - uses: azure/docker-login@v2
+      #   with: { login-server: ${{ env.ACR }} }
+      # - run: |
+      #     IMAGE=${{ env.ACR }}/weather:${{ github.sha }}
+      #     docker build -t $IMAGE ./app
+      #     docker push  $IMAGE
+      #     echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
+      # # ---------- terraform apply ----------
+      # - uses: azure/login@v1
+      #   with: { tenant-id: ${{ secrets.AZ_TENANT }}, subscription-id: ${{ secrets.AZ_SUB }} }
+      # - uses: hashicorp/setup-terraform@v3
+      # - run: terraform -chdir=infra init
+      # - run: |
+      #     terraform -chdir=infra workspace select $WORKSPACE \
+      #       || terraform -chdir=infra workspace new $WORKSPACE
+      # - run: |
+      #     terraform -chdir=infra apply -auto-approve \
+      #       -var="image_tag=$IMAGE_TAG" \
+      #       -var="revision_label=${{ env.LABEL }}" \
+      #       -var='traffic_weights={"dev"=100}'
+
+
+
