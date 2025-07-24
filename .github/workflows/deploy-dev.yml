@@ -3,16 +3,17 @@ on:
   push:
     branches: [dev]
 
-env:
-  ACR: myacr.azurecr.io
-  RG:  aca-dev-rg
-  WORKSPACE: dev 
-  LABEL: dev              
+# env:
+#   ACR: myacr.azurecr.io
+#   RG:  aca-dev-rg
+#   WORKSPACE: dev 
+#   LABEL: dev              
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions: { id-token: write }     # OIDC → Azure
+    permissions:
+      id-token: write
     environment: dev
     steps:
       - uses: actions/checkout@v4
@@ -25,9 +26,11 @@ jobs:
           subscription-id: ${{ vars.SUB_ID }}
           allow-no-subscriptions: true 
 
-      # # ---------- build & push the image ----------
-      # - uses: azure/docker-login@v2
-      #   with: { login-server: ${{ env.ACR }} }
+      - name: login to ACR 
+        run: |
+          # docker login "${ACR_NAME}.azurecr.io" -u ${{ env.UAMI_ID }}
+          az acr login --name ${{ vars.ACR_NAME }}
+
       # - run: |
       #     IMAGE=${{ env.ACR }}/weather:${{ github.sha }}
       #     docker build -t $IMAGE ./app
