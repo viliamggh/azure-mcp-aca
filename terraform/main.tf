@@ -89,27 +89,7 @@ resource "azurerm_container_app" "main" {
       cpu    = var.container_cpu
       memory = var.container_memory
 
-      # Health checks
-      liveness_probe {
-        transport               = "HTTP"
-        port                   = 8000
-        path                   = "/mcp/resource/health"
-        initial_delay          = 10
-        interval_seconds       = 30
-        timeout                = 5
-        failure_count_threshold = 3
-      }
-
-      readiness_probe {
-        transport                = "HTTP"
-        port                    = 8000
-        path                    = "/mcp/resource/health"
-        initial_delay           = 5
-        interval_seconds        = 10
-        timeout                 = 3
-        failure_count_threshold = 3
-        success_count_threshold = 1
-      }
+      # ...existing code...
 
       # Environment variables
       dynamic "env" {

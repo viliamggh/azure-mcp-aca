@@ -21,11 +21,7 @@ def personalized_greeting(name: str) -> str:
     """Generates a personalized greeting for the given name."""
     return f"Hello, {name}! Welcome to the MCP server."
 
-# 5. Add a health MCP resource for Azure probes
-@mcp.resource("resource://health")
-def health() -> dict:
-    """Health check endpoint for Azure Container App probes."""
-    return {"status": "ok"}
+# ...existing code...
 
 
 if __name__ == "__main__":
