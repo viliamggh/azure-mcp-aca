@@ -93,7 +93,7 @@ resource "azurerm_container_app" "main" {
       liveness_probe {
         transport               = "HTTP"
         port                   = 8000
-        path                   = "/health"
+        path                   = "/mcp/resource/health"
         initial_delay          = 10
         interval_seconds       = 30
         timeout                = 5
@@ -103,7 +103,7 @@ resource "azurerm_container_app" "main" {
       readiness_probe {
         transport                = "HTTP"
         port                    = 8000
-        path                    = "/health"
+        path                    = "/mcp/resource/health"
         initial_delay           = 5
         interval_seconds        = 10
         timeout                 = 3
