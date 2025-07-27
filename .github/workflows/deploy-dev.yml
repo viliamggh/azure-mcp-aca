@@ -63,7 +63,7 @@ jobs:
             -var-file=env/dev.tfvars \
             -var="image_tag=${{ github.sha }}" \
             -var="revision_label=${{ env.LABEL }}"  \
-            -var="uami_name=${{ env.IDENTITY_NAME }}"
+            -var="uami_name=${{ vars.IDENTITY_NAME }}"
         env:
           ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
           ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
