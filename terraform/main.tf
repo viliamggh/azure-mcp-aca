@@ -59,7 +59,7 @@ resource "azurerm_container_app" "main" {
   # Registry configuration for ACR
   registry {
     server   = data.azurerm_container_registry.main.login_server
-    identity = var.registry_identity_id
+    identity = azurerm_client_config.current.identity_resource_id
   }
 
   template {

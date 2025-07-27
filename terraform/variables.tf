@@ -81,12 +81,6 @@ variable "traffic_weights" {
   }
 }
 
-# Registry Configuration
-variable "registry_identity_id" {
-  description = "Resource ID of the user-assigned managed identity for registry access"
-  type        = string
-}
-
 # Tags
 variable "tags" {
   description = "Tags to apply to resources"

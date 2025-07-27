@@ -62,8 +62,7 @@ jobs:
           terraform -chdir=terraform apply -auto-approve \
             -var-file=env/dev.tfvars \
             -var="image_tag=${{ github.sha }}" \
-            -var="revision_label=${{ env.LABEL }}" \
-            -var="registry_identity_id=/subscriptions/${{ vars.SUB_ID }}/resourceGroups/${{ vars.RG_NAME }}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${{ vars.IDENTITY_NAME }}"
+            -var="revision_label=${{ env.LABEL }}" 
         env:
           ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
           ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
