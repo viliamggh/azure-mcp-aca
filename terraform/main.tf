@@ -70,6 +70,10 @@ resource "azurerm_container_app" "main" {
   revision_mode                = "Multiple"
 
   # Registry configuration for ACR
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [data.azurerm_user_assigned_identity.uami.id]
+  }
   registry {
     server   = data.azurerm_container_registry.main.login_server
     identity = data.azurerm_user_assigned_identity.uami.id
