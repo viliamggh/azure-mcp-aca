@@ -53,6 +53,8 @@ az acr create \
     --name "$ACR_NAME" \
     --sku Basic
 
+# az role assignment create --assignee $(az identity show --name $IDENTITY_NAME --resource-group $RESOURCE_GROUP_NAME --query clientId -o tsv) --role AcrPush --scope /subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RESOURCE_GROUP_NAME/providers/Microsoft.ContainerRegistry/registries/$ACR_NAME
+
 az identity federated-credential create \
   --resource-group $RESOURCE_GROUP_NAME \
   --identity-name $IDENTITY_NAME \
