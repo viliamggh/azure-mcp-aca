@@ -19,6 +19,11 @@ provider "azurerm" {
 # Data sources for existing resources
 data "azurerm_client_config" "current" {}
 
+data "azurerm_user_assigned_identity" "uami" {
+  name                = var.uami_name
+  resource_group_name = var.resource_group_name
+}
+
 data "azurerm_resource_group" "main" {
   name = var.resource_group_name
 }

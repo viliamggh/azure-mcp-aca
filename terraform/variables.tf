@@ -24,6 +24,12 @@ variable "acr_name" {
   type        = string
 }
 
+# User Assigned Managed Identity
+variable "uami_name" {
+  description = "Name of the User Assigned Managed Identity used for ACR access"
+  type        = string
+}
+
 # Container Configuration
 variable "image_tag" {
   description = "Docker image tag to deploy"
