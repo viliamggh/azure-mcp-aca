@@ -89,7 +89,6 @@ resource "azurerm_container_app" "main" {
       cpu    = var.container_cpu
       memory = var.container_memory
 
-      # ...existing code...
 
       # Environment variables
       dynamic "env" {
