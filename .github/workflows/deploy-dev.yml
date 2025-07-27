@@ -3,11 +3,9 @@ on:
   push:
     branches: [dev]
 
-# env:
-#   ACR: myacr.azurecr.io
-#   RG:  aca-dev-rg
-#   WORKSPACE: dev 
-#   LABEL: dev              
+env:
+  WORKSPACE: dev 
+  LABEL: dev              
 
 jobs:
   deploy:
@@ -35,21 +33,55 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.ACR_NAME }}.azurecr.io/mcp:dev
+          tags: ${{ vars.ACR_NAME }}.azurecr.io/mcp:${{ github.sha }}
 
-      # # ---------- terraform apply ----------
-      # - uses: azure/login@v1
-      #   with: { tenant-id: ${{ secrets.AZ_TENANT }}, subscription-id: ${{ secrets.AZ_SUB }} }
-      # - uses: hashicorp/setup-terraform@v3
-      # - run: terraform -chdir=infra init
-      # - run: |
-      #     terraform -chdir=infra workspace select $WORKSPACE \
-      #       || terraform -chdir=infra workspace new $WORKSPACE
-      # - run: |
-      #     terraform -chdir=infra apply -auto-approve \
-      #       -var="image_tag=$IMAGE_TAG" \
-      #       -var="revision_label=${{ env.LABEL }}" \
-      #       -var='traffic_weights={"dev"=100}'
+      # ---------- terraform apply ----------
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        
+      - name: Terraform Init
+        run: terraform -chdir=terraform init -backend-config=backend.conf
+        env:
+          ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
+          ARM_TENANT_ID: ${{ vars.TENANT_ID }}
+          ARM_USE_OIDC: true
+      
+      - name: Select or Create Terraform Workspace
+        run: |
+          terraform -chdir=terraform workspace select ${{ env.WORKSPACE }} \
+            || terraform -chdir=terraform workspace new ${{ env.WORKSPACE }}
+        env:
+          ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
+          ARM_TENANT_ID: ${{ vars.TENANT_ID }}
+          ARM_USE_OIDC: true
+      
+      - name: Terraform Apply
+        run: |
+          terraform -chdir=terraform apply -auto-approve \
+            -var-file=env/dev.tfvars \
+            -var="image_tag=${{ github.sha }}" \
+            -var="revision_label=${{ env.LABEL }}" \
+            -var="registry_identity_id=/subscriptions/${{ vars.SUB_ID }}/resourceGroups/${{ vars.RG_NAME }}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${{ vars.IDENTITY_NAME }}"
+        env:
+          ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
+          ARM_TENANT_ID: ${{ vars.TENANT_ID }}
+          ARM_USE_OIDC: true
+
+      - name: Get Container App URL
+        run: |
+          APP_FQDN=$(terraform -chdir=terraform output -raw container_app_fqdn)
+          echo "🚀 Container App deployed successfully!"
+          echo "📍 URL: https://$APP_FQDN"
+          echo "APP_URL=https://$APP_FQDN" >> $GITHUB_ENV
+        env:
+          ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
+          ARM_TENANT_ID: ${{ vars.TENANT_ID }}
+          ARM_USE_OIDC: true
+
 
 
 
