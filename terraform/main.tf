@@ -54,8 +54,16 @@ resource "azurerm_container_app_environment" "main" {
   tags = var.tags
 }
 
+resource "azurerm_role_assignment" "container_app_acrpull" {
+  scope                = data.azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = data.azurerm_user_assigned_identity.uami.principal_id
+}
+
+
 # Container App
 resource "azurerm_container_app" "main" {
+  depends_on = [ azurerm_role_assignment.container_app_acrpull ]
   name                         = "${var.project_name}-${var.environment}"
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = data.azurerm_resource_group.main.name
