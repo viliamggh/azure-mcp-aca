@@ -78,3 +78,5 @@ echo $(az identity show --name $IDENTITY_NAME --resource-group $RESOURCE_GROUP_N
 echo $(az identity show --name $IDENTITY_NAME --resource-group $RESOURCE_GROUP_NAME --query tenantId -o tsv) | gh variable set TENANT_ID --repo $REPO_NAME
 echo $(az identity show --name $IDENTITY_NAME --resource-group $RESOURCE_GROUP_NAME | jq -r '.id | split("/")[2]') | gh variable set SUB_ID --repo $REPO_NAME
 echo $ACR_NAME | gh variable set ACR_NAME --repo $REPO_NAME
+echo $RESOURCE_GROUP_NAME | gh variable set RG_NAME --repo $REPO_NAME
+echo $IDENTITY_NAME | gh variable set IDENTITY_NAME --repo $REPO_NAME

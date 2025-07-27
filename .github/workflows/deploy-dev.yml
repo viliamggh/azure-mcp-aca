@@ -56,12 +56,6 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
           ARM_TENANT_ID: ${{ vars.TENANT_ID }}
           ARM_USE_OIDC: true
-      
-      - name: Get UAMI Name from Client ID
-        id: get_uami_name
-        run: |
-          UAMI_NAME=$(az identity list --resource-group ${{ vars.RESOURCE_GROUP_NAME }} --query "[?clientId=='${{ vars.UAMI_ID }}'].name" -o tsv)
-          echo "UAMI_NAME=$UAMI_NAME" >> $GITHUB_ENV
             
       - name: Terraform Apply
         run: |
@@ -69,7 +63,7 @@ jobs:
             -var-file=env/dev.tfvars \
             -var="image_tag=${{ github.sha }}" \
             -var="revision_label=${{ env.LABEL }}"  \
-            -var="uami_name=${{ env.UAMI_NAME }}"
+            -var="uami_name=${{ env.IDENTITY_NAME }}"
         env:
           ARM_CLIENT_ID: ${{ vars.UAMI_ID }}
           ARM_SUBSCRIPTION_ID: ${{ vars.SUB_ID }}
