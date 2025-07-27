@@ -6,6 +6,10 @@ RUN pip install --no-cache-dir uv
 
 WORKDIR /app
 
+# Copy dependency files
+COPY pyproject.toml .
+COPY uv.lock .
+
 # libs instalation via uv
 ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
 RUN uv sync --locked --no-dev
